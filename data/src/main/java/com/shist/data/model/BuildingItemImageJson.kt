@@ -3,7 +3,7 @@ package com.shist.data.model
 import com.google.gson.annotations.SerializedName
 
 data class BuildingItemImageJson (
-    @SerializedName("buildingId") val buildingId: String?,
-    @SerializedName("imagePath") var imagePath: String?,
-    @SerializedName("description") var description: String?
+    @SerializedName("id") val buildingId: String?,
+    @SerializedName("image_path") var imagePath: String?,
+    @SerializedName("image_description") var description: String?
 )

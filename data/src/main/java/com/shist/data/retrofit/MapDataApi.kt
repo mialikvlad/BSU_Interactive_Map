@@ -8,7 +8,7 @@ import retrofit2.http.Query
 // This interface is needed for getting data from server with needed link (list of links is below)
 interface MapDataApi{
 
-    @GET("api/buildings/all")
+    @GET("apiv1/buildings/modern/")
     suspend fun getData() : List<BuildingItemJson>?
 
     @GET("api/building-photos")
