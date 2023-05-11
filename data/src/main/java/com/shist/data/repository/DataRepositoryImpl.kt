@@ -61,27 +61,19 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
     // This function is needed to get actual data from server
     override suspend fun loadData() {
         try {
-            val jsonFile = File("./data.json")
-
-            // Read the contents of the file into a string
-            val jsonString = /*jsonFile.readText()*/ context.assets.open("data.json").bufferedReader().use { it.readText() }
-
-            val generatedList = Gson().fromJson(jsonString, Array<BuildingItemJson>::class.java).toList()
-            Log.d("EGOR", "0")
+            /*val jsonFile = File("./data.json")
+            val jsonString = *//*jsonFile.readText()*//* context.assets.open("data.json").bufferedReader().use { it.readText() }
+            val generatedList = Gson().fromJson(jsonString, Array<BuildingItemJson>::class.java).toList()*/
             val items = service.getData()/*generatedList*/
                 ?.filter { isItemWithID(it) } // Clean list from items with null id
                 ?.map {
-                    Log.d("EGOR", "1")
                     val itemsImages : List<BuildingItemImageJson> =
                         service.getImagesWithBuildingId(it.id!!)/*emptyList()*/
-                    Log.d("EGOR", "2")
                     BuildingItemJsonMapper().fromJsonToRoomDB(it, itemsImages)!!
-                }.also { Log.d("EGOR", "3") }
+                }
                 ?.filter { isItemNotEmpty(it) } // Clean DB from items with empty data
             buildingItemsDatabase.buildingItemsDao().insertBuildingItemsList(items!!)
-            Log.d("EGOR", "4")
         } catch (e: Throwable) {
-            Log.d("EGOR", "5: $e")
             throw NullPointerException("Error: " +
                     "Some BuildingItem (or even whole list) from json is empty!\n" + e.message)
         }
