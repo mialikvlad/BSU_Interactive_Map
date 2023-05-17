@@ -212,6 +212,7 @@ class MapFragment : Fragment(), KoinComponent {
     }
 
     private fun setMarkers(itemsList: List<BuildingItem>) {
+        Log.d("Barca", "$itemsList")
         for (item in itemsList) {
             if (item.address == null)
                 continue
