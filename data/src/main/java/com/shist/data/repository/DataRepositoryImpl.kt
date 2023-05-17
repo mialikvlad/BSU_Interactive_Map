@@ -1,9 +1,6 @@
 package com.shist.data.repository
 
 import android.content.Context
-import android.util.Log
-import com.google.gson.Gson
-import com.shist.data.model.BuildingItemImageJson
 import com.shist.data.model.BuildingItemJson
 import com.shist.data.repository.mappers.AddressItemDBMapper
 import com.shist.data.repository.mappers.BuildingItemDBMapper
@@ -20,7 +17,6 @@ import com.shist.domain.BuildingItem
 import com.shist.domain.DataRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.io.File
 
 // This is implementation of repository based on its interface
 class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabase,
@@ -64,17 +60,16 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
             /*val jsonFile = File("./data.json")
             val jsonString = *//*jsonFile.readText()*//* context.assets.open("data.json").bufferedReader().use { it.readText() }
             val generatedList = Gson().fromJson(jsonString, Array<BuildingItemJson>::class.java).toList()*/
-            val items = service.getData()/*generatedList*/
+            val items = service.getAllBuildings()/*generatedList*/
                 ?.filter { isItemWithID(it) } // Clean list from items with null id
                 ?.map {
                     /*val itemsImages : List<BuildingItemImageJson> =
                         service.getImagesWithBuildingId(it.id!!)*//*emptyList()*/
                     BuildingItemJsonMapper().fromJsonToRoomDB(it/*, itemsImages*/)!!
-                }.also { Log.d("EGOR", "2") }
+                }
                 ?.filter { isItemNotEmpty(it) } // Clean DB from items with empty data
             buildingItemsDatabase.buildingItemsDao().insertBuildingItemsList(items!!)
         } catch (e: Throwable) {
-            Log.d("EGOR", "1: $e")
             throw NullPointerException("Error: " +
                     "Some BuildingItem (or even whole list) from json is empty!\n" + e.message)
         }

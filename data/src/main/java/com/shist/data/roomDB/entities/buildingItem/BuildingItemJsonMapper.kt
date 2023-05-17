@@ -8,6 +8,7 @@ import com.shist.data.model.BuildingItemJson
 import com.shist.data.roomDB.entities.buildingItem.adressItem.AddressItemJsonMapper
 import com.shist.data.roomDB.entities.buildingItem.buildingItemImage.BuildingItemImageEntityDB
 import com.shist.data.roomDB.entities.buildingItem.buildingItemImage.BuildingItemImageJsonMapper
+import com.shist.data.roomDB.entities.buildingItem.scientistItem.ScientistItemJsonMapper
 import com.shist.data.roomDB.entities.buildingItem.structuralObjectItem.StructuralObjectItemJsonMapper
 
 // This mapper converts a JSON entity to a database entity
@@ -65,9 +66,7 @@ class BuildingItemJsonMapper {
     }*/
 
     fun fromJsonToRoomDB(itemJson: BuildingItemJson?): BuildingItemDB? {
-        Log.d("EGOR", "y")
         if (itemJson == null) {
-            Log.d("EGOR", "t")
             return null
         }
         else {
@@ -84,8 +83,6 @@ class BuildingItemJsonMapper {
 
             val structuralObjectsJson = itemJson.structuralObjects
 
-            Log.d("EGOR", "q")
-
             val structuralObjectsDB =
                 structuralObjectsJson?.map {
                     StructuralObjectItemJsonMapper().fromJsonToRoomDB(it, itemJson.id)!!.structuralItemsEntityDB
@@ -95,21 +92,18 @@ class BuildingItemJsonMapper {
                 itemImagesJson?.map {
                     BuildingItemImageJsonMapper().fromJsonToRoomDB(it)!!
                 }*/
-            Log.d("EGOR", "w")
 
             val buildingItemImagesDB =
                 structuralObjectsJson?.firstOrNull()?.locationPhotos?.map {
                     BuildingItemImageJsonMapper().fromJsonToRoomDB(it)!!
                 }
 
-            Log.d("EGOR", "e")
-
             val iconsDB =
                 structuralObjectsJson?.map {
                     StructuralObjectItemJsonMapper().fromJsonToRoomDB(it, itemJson.id)!!.icon
                 }
 
-            Log.d("EGOR", "r")
+            val scientistDB = ScientistItemJsonMapper().fromJsonToRoomDB(itemJson.scientist, itemJson.id)
 
             return BuildingItemDB(
                 BuildingItemEntityDB(
@@ -129,7 +123,8 @@ class BuildingItemJsonMapper {
                         itemJson.description,
                         BuildingItemAddressCoordinatesJson(itemJson.latitude, itemJson.longitude)
                     ), itemJson.id
-                )!!
+                )!!,
+                scientistDB
             )
         }
     }
