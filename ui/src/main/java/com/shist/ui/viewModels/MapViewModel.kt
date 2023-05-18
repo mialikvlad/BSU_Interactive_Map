@@ -20,7 +20,13 @@ class MapViewModel (application: Application)
 
     private val dataRepository: DataRepository by inject()
 
-    val dataFlow: Flow<List<BuildingItem>> = dataRepository.getItems()
+    val allBuildingsFlow: Flow<List<BuildingItem>> = dataRepository.getAllBuildings()
+    val historicalBuildingsFlow: Flow<List<BuildingItem>> = dataRepository.getHistoricalBuildings()
+    val administrativeBuildingsFlow: Flow<List<BuildingItem>> = dataRepository.getAdministrativeBuildings()
+    val educationalBuildingsFlow: Flow<List<BuildingItem>> = dataRepository.getEducationalBuildings()
+    val multifunctionalBuildingsFlow: Flow<List<BuildingItem>> = dataRepository.getMultifunctionalBuildings()
+    val dormitoryBuildingsFlow: Flow<List<BuildingItem>> = dataRepository.getDormitoryBuildings()
+
 
     val state: MutableStateFlow<LoadState> = MutableStateFlow(LoadState.IDLE)
 

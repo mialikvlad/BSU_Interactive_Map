@@ -2,9 +2,7 @@ package com.shist.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import com.shist.ui.databinding.MapBinding
 import com.shist.ui.viewModels.MapViewModel
@@ -41,6 +39,7 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.annotation.AnnotationPlugin
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
@@ -77,6 +76,7 @@ class MapFragment : Fragment(), KoinComponent {
     private lateinit var annotationApi : AnnotationPlugin
     private lateinit var pointAnnotationManager : PointAnnotationManager
     private lateinit var viewAnnotationManager : ViewAnnotationManager
+    private val pointAnnotationList = mutableListOf<PointAnnotation>()
 
     private val asyncInflater by lazy { AsyncLayoutInflater(requireContext()) }
 
@@ -114,6 +114,67 @@ class MapFragment : Fragment(), KoinComponent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var dataList: List<BuildingItem> = emptyList()
+
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.all_buildings -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.allBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+                R.id.historical -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.historicalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+                R.id.administrative -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.administrativeBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+                R.id.educational -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.educationalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+                R.id.dormitory -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.dormitoryBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+                R.id.multifunctional -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.multifunctionalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+            }
+            false
+        }
         mapView = binding.mapView
 
         annotationApi = mapView.annotations
@@ -136,12 +197,10 @@ class MapFragment : Fragment(), KoinComponent {
             onMapReady()
         }
 
-        var dataList: List<BuildingItem> = emptyList()
-
         // Getting data from local database (if there are some)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) { // Periodically check the block below...
-                viewModel.dataFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                viewModel.allBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
                     dataList = it
                     setMarkers(dataList)
                 }
@@ -211,8 +270,19 @@ class MapFragment : Fragment(), KoinComponent {
         }
     }
 
+    /*override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.map_popup_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }*/
+
+    private fun removeMarkers() {
+        pointAnnotationManager.delete(pointAnnotationList)
+    }
+
     private fun setMarkers(itemsList: List<BuildingItem>) {
-        Log.d("Barca", "$itemsList")
+        itemsList.forEachIndexed { index, buildingItem ->
+            Log.d("Barca", "${buildingItem.type}")
+        }
         for (item in itemsList) {
             if (item.address == null)
                 continue
@@ -235,6 +305,7 @@ class MapFragment : Fragment(), KoinComponent {
                 continue // If point with such longitude and latitude already exists then just skip her
             }
             val pointAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
+            pointAnnotationList.add(pointAnnotation)
             Log.d("POINT_ANNOTATION_ADDED", "ADDED POINT WITH ID : " + pointAnnotation.featureIdentifier)
             if (viewAnnotationManager.getViewAnnotationByFeatureId(pointAnnotation.featureIdentifier) == null) { // Add annotation of view of the point (if there is no yet)
                 if (item.type == "историческое") { // It's better to replace with !isModern, but on our server all isModern are set to false...

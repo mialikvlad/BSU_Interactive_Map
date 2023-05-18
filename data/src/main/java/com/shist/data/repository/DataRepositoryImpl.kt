@@ -76,7 +76,7 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
     }
 
     // This function return list of all items that are in local database
-    override fun getItems(): Flow<List<BuildingItem>> {
+    override fun getAllBuildings(): Flow<List<BuildingItem>> {
         try {
             return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
                 list.map { BuildingItemDBMapper().fromDBToDomain(it)!! } }
@@ -84,6 +84,64 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
             throw NullPointerException("Error while getting building items: " +
             "Some item is nullable!\n" + e.message)
         }
+    }
+
+    override fun getHistoricalBuildings(): Flow<List<BuildingItem>> {
+        try {
+            return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem -> buildingItem.type == TYPE_HISTORICAL } }
+        } catch (e: Throwable) {
+            throw NullPointerException("Error while getting building items: " +
+                    "Some item is nullable!\n" + e.message)
+        }
+    }
+
+    override fun getAdministrativeBuildings(): Flow<List<BuildingItem>> {
+        try {
+            return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem -> buildingItem.type == TYPE_ADMINISTRATIVE } }
+        } catch (e: Throwable) {
+            throw NullPointerException("Error while getting building items: " +
+                    "Some item is nullable!\n" + e.message)
+        }
+    }
+
+    override fun getEducationalBuildings(): Flow<List<BuildingItem>> {
+        try {
+            return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem -> buildingItem.type == TYPE_EDUCATIONAL } }
+        } catch (e: Throwable) {
+            throw NullPointerException("Error while getting building items: " +
+                    "Some item is nullable!\n" + e.message)
+        }
+    }
+
+    override fun getDormitoryBuildings(): Flow<List<BuildingItem>> {
+        try {
+            return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem -> buildingItem.type == TYPE_DORMITORY } }
+        } catch (e: Throwable) {
+            throw NullPointerException("Error while getting building items: " +
+                    "Some item is nullable!\n" + e.message)
+        }
+    }
+
+    override fun getMultifunctionalBuildings(): Flow<List<BuildingItem>> {
+        try {
+            return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem -> buildingItem.type == TYPE_MULTIFUNCTIONAL } }
+        } catch (e: Throwable) {
+            throw NullPointerException("Error while getting building items: " +
+                    "Some item is nullable!\n" + e.message)
+        }
+    }
+
+    companion object {
+        private const val TYPE_HISTORICAL = "историческое"
+        private const val TYPE_EDUCATIONAL = "учебное"
+        private const val TYPE_ADMINISTRATIVE = "административное"
+        private const val TYPE_DORMITORY = "общежитие"
+        private const val TYPE_MULTIFUNCTIONAL = "многофункциональное"
     }
 
 }
