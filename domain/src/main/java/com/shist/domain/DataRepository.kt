@@ -7,6 +7,15 @@ interface DataRepository {
 
     suspend fun loadData()
 
-    fun getItems(): Flow<List<BuildingItem>>
+    fun getAllBuildings(): Flow<List<BuildingItem>>
 
+    fun getHistoricalBuildings(): Flow<List<BuildingItem>>
+
+    fun getAdministrativeBuildings(): Flow<List<BuildingItem>>
+
+    fun getEducationalBuildings(): Flow<List<BuildingItem>>
+
+    fun getDormitoryBuildings(): Flow<List<BuildingItem>>
+
+    fun getMultifunctionalBuildings(): Flow<List<BuildingItem>>
 }
