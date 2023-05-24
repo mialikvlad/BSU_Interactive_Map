@@ -40,7 +40,7 @@ val dataModule = module {
                 context.applicationContext,
                 BuildingItemsDatabase::class.java, "bsumapDB"
             ) // Use code below and your Migration if you've made some changes in DB structure
-                .addMigrations(MigrationDB.MIGRATION_1_2)
+                .addMigrations(MigrationDB.MIGRATION_3_4)
                 //.addMigrations(MigrationDB.MIGRATION_2_3)
                 .build()
 
@@ -50,7 +50,7 @@ val dataModule = module {
     single {
         val retrofitClient: RetrofitClient = get()
 
-        retrofitClient.retrofit("https://8588-46-53-253-84.ngrok-free.app/")
+        retrofitClient.retrofit("https://331a-46-53-254-157.ngrok-free.app/")
             .create(MapDataApi::class.java)
     }
 
