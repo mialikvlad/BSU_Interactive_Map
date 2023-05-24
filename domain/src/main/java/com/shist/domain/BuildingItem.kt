@@ -24,11 +24,7 @@ data class BuildingItem(
 
     val type: String?,
 
-    val markerPath: String?,
-
-    val order: String?,
-
-    val scientist: ScientistItem?
+    val markerPath: String?
 
 )  : Parcelable { // We need to implement an interface Parcelable in order to save this object in Bundle (for example, while rotating phone)
     constructor(parcel: Parcel) : this(
@@ -40,9 +36,7 @@ data class BuildingItem(
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
         parcel.readParcelable(AddressItem::class.java.classLoader),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readParcelable(ScientistItem::class.java.classLoader)
+        parcel.readString()
     ) {
     }
 
@@ -55,8 +49,6 @@ data class BuildingItem(
         parcel.writeParcelable(address, flags)
         parcel.writeString(type)
         parcel.writeString(markerPath)
-        parcel.writeString(order)
-        parcel.writeParcelable(scientist, flags)
     }
 
     override fun describeContents(): Int {

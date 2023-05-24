@@ -19,15 +19,4 @@ object MigrationDB {
                     "buildingItemId TEXT);")
         }
     }
-
-    val MIGRATION_3_4 = object : Migration(3, 4) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("CREATE TABLE IF NOT EXISTS scientist (" +
-                    "id TEXT PRIMARY KEY NOT NULL, " +
-                    "fullName TEXT, " +
-                    "imagePath TEXT, " +
-                    "description TEXT," +
-                    "buildingItemId TEXT);")
-        }
-    }
 }
