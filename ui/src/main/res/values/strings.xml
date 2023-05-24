@@ -19,11 +19,4 @@
     <string name="logotype">Logotype</string>
     <string name="building_img">Image of building</string>
     <string name="future_feature">This feature will be developed in future</string>
-    <string name="menu_historical">Historical</string>
-    <string name="menu_administrative">Administrative</string>
-    <string name="menu_educational">Educational</string>
-    <string name="menu_dormitory">Dormitory</string>
-    <string name="menu_multifunctional">Multifunctional</string>
-    <string name="all_buildings">All buildings</string>
-    <string name="scientists">Scientists</string>
 </resources>

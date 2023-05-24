@@ -1,10 +1,8 @@
 package com.shist.data.roomDB.entities.buildingItem
 
-import android.util.Log
 import androidx.room.*
 import com.shist.data.roomDB.entities.buildingItem.adressItem.AddressItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.buildingItemImage.BuildingItemImageEntityDB
-import com.shist.data.roomDB.entities.buildingItem.scientistItem.ScientistItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.structuralObjectItem.StructuralObjectItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.structuralObjectItem.iconItem.IconItemEntityDB
 import kotlinx.coroutines.flow.Flow
@@ -126,13 +124,6 @@ interface BuildingItemDAO {
     suspend fun updateAddressItemEntityDB(address: AddressItemEntityDB?)
     @Delete
     suspend fun deleteAddressItemEntityDB(address: AddressItemEntityDB?)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertScientistItemEntityDB(scientist: ScientistItemEntityDB?): Long
-    @Update
-    suspend fun updateScientistItemEntityDB(scientist: ScientistItemEntityDB?)
-    @Delete
-    suspend fun deleteScientistItemEntityDB(scientist: ScientistItemEntityDB?)
     // =================================
 
     @Transaction
@@ -143,9 +134,6 @@ interface BuildingItemDAO {
         insertBuildingItemImageEntitiesListDB(item.buildingItemImageEntities)
         insertIconItemEntitiesListDB(item.iconEntities)
         insertAddressItemEntityDB(item.address)
-        if (item.scientist != null) {
-            insertScientistItemEntityDB(item.scientist)
-        }
         return resultValue
     }
 
@@ -167,9 +155,6 @@ interface BuildingItemDAO {
         updateBuildingItemImageEntitiesListDB(item.buildingItemImageEntities)
         updateIconItemEntitiesListDB(item.iconEntities)
         updateAddressItemEntityDB(item.address)
-        if (item.scientist != null) {
-            updateScientistItemEntityDB(item.scientist)
-        }
     }
 
     @Transaction
@@ -188,9 +173,6 @@ interface BuildingItemDAO {
             deleteBuildingItemImageEntitiesListDB(item.buildingItemImageEntities)
             deleteIconItemEntitiesListDB(item.iconEntities)
             deleteAddressItemEntityDB(item.address)
-            if (item.scientist != null) {
-                deleteScientistItemEntityDB(item.scientist)
-            }
         }
         deleteBuildingItemEntityDB(item.buildingItemEntityDB)
     }
