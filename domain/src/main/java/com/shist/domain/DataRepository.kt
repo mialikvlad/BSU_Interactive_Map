@@ -18,4 +18,6 @@ interface DataRepository {
     fun getDormitoryBuildings(): Flow<List<BuildingItem>>
 
     fun getMultifunctionalBuildings(): Flow<List<BuildingItem>>
+
+    fun getScientistLocations(scientistName: String): Flow<List<BuildingItem>>
 }

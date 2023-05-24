@@ -42,4 +42,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:contentDescription="@string/scientists" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_scientists"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_science_atom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/scientists" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

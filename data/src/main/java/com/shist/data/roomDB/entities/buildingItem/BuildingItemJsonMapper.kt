@@ -104,7 +104,6 @@ class BuildingItemJsonMapper {
                 }
 
             val scientistDB = ScientistItemJsonMapper().fromJsonToRoomDB(itemJson.scientist, itemJson.id)
-
             return BuildingItemDB(
                 BuildingItemEntityDB(
                     itemJson.id!!,
@@ -112,7 +111,8 @@ class BuildingItemJsonMapper {
                     itemJson.name,
                     /*itemJson.isModern.toBoolean()*/null,
                     type,
-                    markerPath
+                    markerPath,
+                    itemJson.order
                 ),
                 structuralObjectsDB!!,
                 buildingItemImagesDB ?: listOf(BuildingItemImageEntityDB(itemJson.id!!, null, null, null)),
@@ -120,7 +120,7 @@ class BuildingItemJsonMapper {
                 AddressItemJsonMapper().fromJsonToRoomDB(
                     BuildingItemAddressJson(
                         itemJson.id,
-                        itemJson.description,
+                        itemJson.address,
                         BuildingItemAddressCoordinatesJson(itemJson.latitude, itemJson.longitude)
                     ), itemJson.id
                 )!!,

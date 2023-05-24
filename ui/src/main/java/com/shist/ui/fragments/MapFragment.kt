@@ -113,8 +113,16 @@ class MapFragment : Fragment(), KoinComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d("Barca", "onViewCreated")
         var dataList: List<BuildingItem> = emptyList()
+
+        binding.buttonScientists.setOnClickListener {
+            Log.d("Barca", "${viewModel.scientists}")
+            if (viewModel.scientists?.isNotEmpty() == true) {
+                val myActivity = requireActivity() as MainActivity
+                myActivity.onScientistButtonClick(viewModel.scientists)
+            }
+        }
 
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId) {
@@ -168,6 +176,17 @@ class MapFragment : Fragment(), KoinComponent {
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.multifunctionalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
                             dataList = it
+                            setMarkers(dataList)
+                        }
+                    }
+                }
+                R.id.scientist -> {
+                    removeMarkers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.scientistLocationsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            dataList = it
+                            viewModel.scientists = it.mapNotNull { list -> list.scientist }
+                                .distinct().toMutableList()
                             setMarkers(dataList)
                         }
                     }
@@ -275,32 +294,64 @@ class MapFragment : Fragment(), KoinComponent {
         super.onCreateOptionsMenu(menu, inflater)
     }*/
 
+    fun showScientistMarkers(id: String) {
+        removeMarkers()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.scientistLocationsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                it.forEachIndexed { index, buildingItem ->
+                    Log.d("Barca2", "$index) $buildingItem")
+                }
+                val dataList = it.filter { buildingItem ->
+                    if (buildingItem.scientist != null) {
+                        Log.d("Barca2", "${buildingItem.scientist}")
+                    }
+                    (buildingItem.scientist?.id ?: -1) == id
+                }
+                Log.d("Barca2", "${dataList.size}")
+                viewModel.scientists = it.mapNotNull { list -> list.scientist }
+                    .distinct().toMutableList()
+                setMarkers(dataList)
+            }
+        }
+    }
+
     private fun removeMarkers() {
         pointAnnotationManager.delete(pointAnnotationList)
     }
 
     private fun setMarkers(itemsList: List<BuildingItem>) {
-        itemsList.forEachIndexed { index, buildingItem ->
-            Log.d("Barca", "${buildingItem.type}")
-        }
         for (item in itemsList) {
             if (item.address == null)
                 continue
-            // Here (in the future) it is worth adding cases for other types of buildings (default - historical)
             val buildingType = when (item.type) {
                 "историческое" -> R.drawable.ic_marker_historical
                 "учебное" -> R.drawable.ic_marker_uchebnoye
                 "общежитие" -> R.drawable.ic_marker_obsezhitie
                 "административное" -> R.drawable.ic_marker_admin
                 "многофункциональное" -> R.drawable.ic_marker_mnogofunc
+                "scientist_location" -> R.drawable.ic_scientist_circle
                 else -> R.drawable.ic_marker_historical
             }
             val point = Point.fromLngLat(
                 item.address?.longitude?.toDouble()!!,
                 item.address?.latitude?.toDouble()!!)
-            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-                .withPoint(point)
-                .withIconImage(ContextCompat.getDrawable(requireContext(), buildingType)?.toBitmap()!!)
+            val pointAnnotationOptions: PointAnnotationOptions =
+                if (item.type == "scientist_location") {
+                    PointAnnotationOptions()
+                        .withPoint(point)
+                        .withIconImage(
+                            ContextCompat.getDrawable(requireContext(), buildingType)?.toBitmap()!!
+                        )
+                        .withTextField("${item.order}")
+                        .withTextSize(20.0)
+                        .withTextColor(requireContext().getColor(R.color.white))
+                } else {
+                    PointAnnotationOptions()
+                        .withPoint(point)
+                        .withIconImage(
+                            ContextCompat.getDrawable(requireContext(), buildingType)?.toBitmap()!!
+                        )
+                }
             if (isPointAlreadyExists(point)) {
                 continue // If point with such longitude and latitude already exists then just skip her
             }
@@ -501,7 +552,13 @@ class MapFragment : Fragment(), KoinComponent {
     @SuppressWarnings("MissingPermission")
     override fun onStart() {
         super.onStart()
+        Log.d("Barca", "onStart")
         mapView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("Barca", "onResume")
     }
 
     @Override

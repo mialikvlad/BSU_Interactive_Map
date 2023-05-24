@@ -1,6 +1,7 @@
 package com.shist.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.shist.data.model.BuildingItemJson
 import com.shist.data.repository.mappers.AddressItemDBMapper
 import com.shist.data.repository.mappers.BuildingItemDBMapper
@@ -57,15 +58,10 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
     // This function is needed to get actual data from server
     override suspend fun loadData() {
         try {
-            /*val jsonFile = File("./data.json")
-            val jsonString = *//*jsonFile.readText()*//* context.assets.open("data.json").bufferedReader().use { it.readText() }
-            val generatedList = Gson().fromJson(jsonString, Array<BuildingItemJson>::class.java).toList()*/
-            val items = service.getAllBuildings()/*generatedList*/
+            val items = service.getAllBuildings()
                 ?.filter { isItemWithID(it) } // Clean list from items with null id
                 ?.map {
-                    /*val itemsImages : List<BuildingItemImageJson> =
-                        service.getImagesWithBuildingId(it.id!!)*//*emptyList()*/
-                    BuildingItemJsonMapper().fromJsonToRoomDB(it/*, itemsImages*/)!!
+                    BuildingItemJsonMapper().fromJsonToRoomDB(it)!!
                 }
                 ?.filter { isItemNotEmpty(it) } // Clean DB from items with empty data
             buildingItemsDatabase.buildingItemsDao().insertBuildingItemsList(items!!)
@@ -79,7 +75,8 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
     override fun getAllBuildings(): Flow<List<BuildingItem>> {
         try {
             return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
-                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! } }
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem ->
+                    buildingItem.type != TYPE_SCIENTIST_LOCATION } }
         } catch (e: Throwable) {
             throw NullPointerException("Error while getting building items: " +
             "Some item is nullable!\n" + e.message)
@@ -136,12 +133,23 @@ class DataRepositoryImpl(private val buildingItemsDatabase: BuildingItemsDatabas
         }
     }
 
+    override fun getScientistLocations(scientistName: String): Flow<List<BuildingItem>> {
+        try {
+            return buildingItemsDatabase.buildingItemsDao().getAllBuildingItems().map { list ->
+                list.map { BuildingItemDBMapper().fromDBToDomain(it)!! }.filter { buildingItem -> buildingItem.type == TYPE_SCIENTIST_LOCATION } }
+        } catch (e: Throwable) {
+            throw NullPointerException("Error while getting building items: " +
+                    "Some item is nullable!\n" + e.message)
+        }
+    }
+
     companion object {
         private const val TYPE_HISTORICAL = "историческое"
         private const val TYPE_EDUCATIONAL = "учебное"
         private const val TYPE_ADMINISTRATIVE = "административное"
         private const val TYPE_DORMITORY = "общежитие"
         private const val TYPE_MULTIFUNCTIONAL = "многофункциональное"
+        private const val TYPE_SCIENTIST_LOCATION = "scientist_location"
     }
 
 }

@@ -1,5 +1,6 @@
 package com.shist.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,7 +12,7 @@ import com.shist.domain.BuildingItemImage
 import com.shist.domain.ScientistItem
 import com.shist.ui.databinding.ScientistItemBinding
 
-class ScientistsAdapter() : ListAdapter<ScientistItem, ScientistsAdapter.ItemViewHolder>(ScientistItemDiffCallback()){
+class ScientistsAdapter(val onScientistClick: (ScientistItem) -> Unit) : ListAdapter<ScientistItem, ScientistsAdapter.ItemViewHolder>(ScientistItemDiffCallback()){
 
     class ItemViewHolder(itemBinding: ScientistItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
@@ -29,8 +30,10 @@ class ScientistsAdapter() : ListAdapter<ScientistItem, ScientistsAdapter.ItemVie
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        Log.d("Barca", "position: $position")
         val scientist = getItem(position)
         holder.fullName.text = scientist.fullName
+        holder.itemView.setOnClickListener { onScientistClick(scientist) }
         //add logic to image
     }
 

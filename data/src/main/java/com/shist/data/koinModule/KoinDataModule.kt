@@ -40,7 +40,7 @@ val dataModule = module {
                 context.applicationContext,
                 BuildingItemsDatabase::class.java, "bsumapDB"
             ) // Use code below and your Migration if you've made some changes in DB structure
-                .addMigrations(MigrationDB.MIGRATION_1_2)
+                .addMigrations(MigrationDB.MIGRATION_3_4)
                 //.addMigrations(MigrationDB.MIGRATION_2_3)
                 .build()
 

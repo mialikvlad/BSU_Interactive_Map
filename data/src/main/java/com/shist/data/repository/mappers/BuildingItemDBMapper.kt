@@ -1,5 +1,6 @@
 package com.shist.data.repository.mappers
 
+import android.util.Log
 import com.shist.data.roomDB.entities.buildingItem.BuildingItemDB
 import com.shist.domain.BuildingItem
 import com.shist.domain.StructuralObjectItem
@@ -40,7 +41,10 @@ class BuildingItemDBMapper {
                 item.buildingItemEntityDB.isModern,
                 AddressItemDBMapper().fromDBToDomain(item.address),
                 item.buildingItemEntityDB.type,
-                item.buildingItemEntityDB.markerPath)
+                item.buildingItemEntityDB.markerPath,
+                item.buildingItemEntityDB.order,
+                ScientistItemDBMapper().fromDBToDomain(item.scientist)
+            )
         }
     }
 
