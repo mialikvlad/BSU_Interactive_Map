@@ -18,4 +18,11 @@
     <string name="logotype">Логотип</string>
     <string name="building_img">Изображение достопримечательности</string>
     <string name="future_feature">Эта функция будет разработана в будущем</string>
+    <string name="menu_historical">Исторические</string>
+    <string name="menu_administrative">Административные</string>
+    <string name="menu_educational">Учебные</string>
+    <string name="menu_dormitory">Общежития</string>
+    <string name="menu_multifunctional">Многофункциональные</string>
+    <string name="all_buildings">Все объекты</string>
+    <string name="scientists">Научные деятели</string>
 </resources>

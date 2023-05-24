@@ -1,5 +1,6 @@
 package com.shist.data.roomDB.entities.buildingItem.adressItem
 
+import android.util.Log
 import com.shist.data.model.BuildingItemAddressJson
 
 // This mapper converts a JSON entity to a database entity

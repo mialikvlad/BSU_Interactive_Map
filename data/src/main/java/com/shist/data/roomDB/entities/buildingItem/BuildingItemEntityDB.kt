@@ -23,6 +23,8 @@ data class BuildingItemEntityDB(
     val type: String?,
 
     @ColumnInfo(name = "markerPath")
-    val markerPath: String?
+    val markerPath: String?,
 
+    @ColumnInfo(name = "order")
+    val order: String?
 )

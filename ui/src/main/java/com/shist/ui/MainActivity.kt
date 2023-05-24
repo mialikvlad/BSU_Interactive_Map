@@ -5,11 +5,13 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.shist.domain.BuildingItem
 import com.shist.domain.BuildingItemImage
+import com.shist.domain.ScientistItem
 import com.shist.domain.StructuralObjectItem
 import com.shist.ui.databinding.ActivityMainBinding
 import com.shist.ui.fragments.HistBuildingDetailsFragment
 import com.shist.ui.fragments.MapFragment
 import com.shist.ui.fragments.ModernDepartDetailsFragment
+import com.shist.ui.fragments.ScientistsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +44,10 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
+    }
+
+    fun onScientistButtonClick(scientistList: List<ScientistItem?>?) {
+        inflateFragment(ScientistsFragment.newInstance(scientistList), R.id.fragment_container, true)
     }
 
     fun onHistoricalBuildingClick(building: BuildingItem, imagesList: List<BuildingItemImage?>?) {

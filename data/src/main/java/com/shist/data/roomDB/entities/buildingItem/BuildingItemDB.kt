@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.shist.data.roomDB.entities.buildingItem.adressItem.AddressItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.buildingItemImage.BuildingItemImageEntityDB
+import com.shist.data.roomDB.entities.buildingItem.scientistItem.ScientistItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.structuralObjectItem.StructuralObjectItemEntityDB
 import com.shist.data.roomDB.entities.buildingItem.structuralObjectItem.iconItem.IconItemEntityDB
 
@@ -42,6 +43,11 @@ data class BuildingItemDB (
         parentColumn = "id",
         entityColumn = "buildingItemId"
     )
-    val address: AddressItemEntityDB?
+    val address: AddressItemEntityDB?,
 
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "buildingItemId"
+    )
+    val scientist: ScientistItemEntityDB?
 )
