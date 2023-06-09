@@ -30,7 +30,6 @@ class ScientistsAdapter(val onScientistClick: (ScientistItem) -> Unit) : ListAda
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        Log.d("Barca", "position: $position")
         val scientist = getItem(position)
         holder.fullName.text = scientist.fullName
         holder.itemView.setOnClickListener { onScientistClick(scientist) }

@@ -41,14 +41,12 @@ class ScientistsFragment : Fragment(), KoinComponent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val scientists = arguments?.getParcelableArrayList<ScientistItem>(KEY_SCIENTIST_LIST)?.toList()
-        Log.d("Barca", "${scientists}")
         val adapter = ScientistsAdapter(){
            /* val prefs = requireContext().getSharedPreferences("SCIENTIST_PREFS", Context.MODE_PRIVATE)
             val editor = prefs.edit()
             editor.putString("SCIENTIST_ID", it.id)
             editor.apply()
             requireActivity().supportFragmentManager.popBackStack()*/
-            Log.d("Barca2", "${it.id}")
             (requireActivity().supportFragmentManager.fragments[requireActivity().supportFragmentManager.fragments.lastIndex - 1] as MapFragment).showScientistMarkers(it.id)
             requireActivity().supportFragmentManager.popBackStack()
         }

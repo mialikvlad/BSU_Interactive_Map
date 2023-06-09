@@ -2,6 +2,7 @@ package com.shist.ui.fragments
 
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +48,7 @@ class ModernDepartDetailsFragment : Fragment(), KoinComponent {
 
         val department = arguments?.getParcelable<StructuralObjectItem>(departId)
         val imagesList = arguments?.getParcelableArrayList<BuildingItemImage>(imagesListId)?.toList()
+        Log.d("Barca6", "${imagesList}")
 
         val pageImgLogotypeLink: ImageView = binding.imgLogotypeWithWebLink
         val pageTitle: TextView = binding.title
