@@ -46,8 +46,8 @@ data class BuildingItemDB (
     val address: AddressItemEntityDB?,
 
     @Relation(
-        parentColumn = "id",
-        entityColumn = "buildingItemId"
+        parentColumn = "scientistId",
+        entityColumn = "id"
     )
     val scientist: ScientistItemEntityDB?
 )

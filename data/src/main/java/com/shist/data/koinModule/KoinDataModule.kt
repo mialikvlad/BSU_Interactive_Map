@@ -50,7 +50,7 @@ val dataModule = module {
     single {
         val retrofitClient: RetrofitClient = get()
 
-        retrofitClient.retrofit("https://331a-46-53-254-157.ngrok-free.app/")
+        retrofitClient.retrofit("http://map.bsu.by/")
             .create(MapDataApi::class.java)
     }
 

@@ -25,7 +25,7 @@
         android:id="@+id/multifunctional"
         android:title="@string/menu_multifunctional" />
 
-    <item
+    <!--<item
         android:id="@+id/scientist"
-        android:title="Ученый"/>
+        android:title="Ученый"/>-->
 </menu>

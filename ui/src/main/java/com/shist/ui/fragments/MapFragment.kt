@@ -77,6 +77,7 @@ class MapFragment : Fragment(), KoinComponent {
     private lateinit var pointAnnotationManager : PointAnnotationManager
     private lateinit var viewAnnotationManager : ViewAnnotationManager
     private val pointAnnotationList = mutableListOf<PointAnnotation>()
+    var currentPosition = -1
 
     private val asyncInflater by lazy { AsyncLayoutInflater(requireContext()) }
 
@@ -113,11 +114,9 @@ class MapFragment : Fragment(), KoinComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("Barca", "onViewCreated")
         var dataList: List<BuildingItem> = emptyList()
 
         binding.buttonScientists.setOnClickListener {
-            Log.d("Barca", "${viewModel.scientists}")
             if (viewModel.scientists?.isNotEmpty() == true) {
                 val myActivity = requireActivity() as MainActivity
                 myActivity.onScientistButtonClick(viewModel.scientists)
@@ -130,7 +129,10 @@ class MapFragment : Fragment(), KoinComponent {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.allBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            Log.d("Barca", "all_buildings: ${it.size}")
                             dataList = it
+                            Log.d("Barca", "clear pointAnnotationList")
+                            pointAnnotationList.clear()
                             setMarkers(dataList)
                         }
                     }
@@ -139,7 +141,10 @@ class MapFragment : Fragment(), KoinComponent {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.historicalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            Log.d("Barca", "historical: ${it.size}")
                             dataList = it
+                            Log.d("Barca", "clear pointAnnotationList")
+                            pointAnnotationList.clear()
                             setMarkers(dataList)
                         }
                     }
@@ -148,7 +153,10 @@ class MapFragment : Fragment(), KoinComponent {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.administrativeBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            Log.d("Barca", "administrative: ${it.size}")
                             dataList = it
+                            Log.d("Barca", "clear pointAnnotationList")
+                            pointAnnotationList.clear()
                             setMarkers(dataList)
                         }
                     }
@@ -157,7 +165,10 @@ class MapFragment : Fragment(), KoinComponent {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.educationalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            Log.d("Barca", "educational: ${it.size}")
                             dataList = it
+                            Log.d("Barca", "clear pointAnnotationList")
+                            pointAnnotationList.clear()
                             setMarkers(dataList)
                         }
                     }
@@ -166,7 +177,10 @@ class MapFragment : Fragment(), KoinComponent {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.dormitoryBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            Log.d("Barca", "dormitory: ${it.size}")
                             dataList = it
+                            Log.d("Barca", "clear pointAnnotationList")
+                            pointAnnotationList.clear()
                             setMarkers(dataList)
                         }
                     }
@@ -175,12 +189,15 @@ class MapFragment : Fragment(), KoinComponent {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.multifunctionalBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                            Log.d("Barca", "multifunctional: ${it.size}")
                             dataList = it
+                            Log.d("Barca", "clear pointAnnotationList")
+                            pointAnnotationList.clear()
                             setMarkers(dataList)
                         }
                     }
                 }
-                R.id.scientist -> {
+                /*R.id.scientist -> {
                     removeMarkers()
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.scientistLocationsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
@@ -190,7 +207,7 @@ class MapFragment : Fragment(), KoinComponent {
                             setMarkers(dataList)
                         }
                     }
-                }
+                }*/
             }
             false
         }
@@ -221,8 +238,60 @@ class MapFragment : Fragment(), KoinComponent {
             repeatOnLifecycle(Lifecycle.State.STARTED) { // Periodically check the block below...
                 viewModel.allBuildingsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
                     dataList = it
+                    /*viewModel.scientists = it.mapNotNull { list -> list.scientist }
+                        .distinct().toMutableList()*/
+                    Log.d("Barca", "XX")
                     setMarkers(dataList)
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.scientistLocationsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
+                    /*dataList = it*/
+                    viewModel.scientists = it.mapNotNull { list -> list.scientist }
+                        .distinct().toMutableList()
+                    /*setMarkers(dataList)*/
+                }
+            }
+        }
+
+        binding.buttonNext.setOnClickListener {
+            if (pointAnnotationList.isNotEmpty()) {
+                val cameraPosition = CameraOptions.Builder()
+                    .zoom(14.0)
+                    .center(
+                        if (currentPosition + 1 < pointAnnotationList.size) {
+                            currentPosition++
+                            pointAnnotationList[currentPosition].point
+                        } else {
+                            currentPosition = 0
+                            pointAnnotationList[currentPosition].point
+                        }
+                    )
+                    .build()
+                // set camera position
+                mapView.getMapboxMap().setCamera(cameraPosition)
+            }
+        }
+
+        binding.buttonPrevious.setOnClickListener {
+            if (pointAnnotationList.isNotEmpty()) {
+                val cameraPosition = CameraOptions.Builder()
+                    .zoom(14.0)
+                    .center(
+                        if (currentPosition > 0) {
+                            currentPosition--
+                            pointAnnotationList[currentPosition].point
+                        } else {
+                            currentPosition = pointAnnotationList.lastIndex
+                            pointAnnotationList[currentPosition].point
+                        }
+                    )
+                    .build()
+                // set camera position
+                mapView.getMapboxMap().setCamera(cameraPosition)
             }
         }
 
@@ -298,24 +367,21 @@ class MapFragment : Fragment(), KoinComponent {
         removeMarkers()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.scientistLocationsFlow.collect { // If there are some changes at viewModel.dataFlow, then block below will run...
-                it.forEachIndexed { index, buildingItem ->
-                    Log.d("Barca2", "$index) $buildingItem")
-                }
                 val dataList = it.filter { buildingItem ->
-                    if (buildingItem.scientist != null) {
-                        Log.d("Barca2", "${buildingItem.scientist}")
-                    }
                     (buildingItem.scientist?.id ?: -1) == id
-                }
-                Log.d("Barca2", "${dataList.size}")
+                }.sortedBy { buildingItem -> buildingItem.order?.toInt() }
                 viewModel.scientists = it.mapNotNull { list -> list.scientist }
                     .distinct().toMutableList()
+                Log.d("Barca", "ZZ")
+                pointAnnotationList.clear()
                 setMarkers(dataList)
             }
         }
     }
 
     private fun removeMarkers() {
+        currentPosition = -1
+        Log.d("Barca", "delete pointAnnotationList")
         pointAnnotationManager.delete(pointAnnotationList)
     }
 
@@ -356,6 +422,7 @@ class MapFragment : Fragment(), KoinComponent {
                 continue // If point with such longitude and latitude already exists then just skip her
             }
             val pointAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
+            Log.d("Barca", "add pointAnnotationList")
             pointAnnotationList.add(pointAnnotation)
             Log.d("POINT_ANNOTATION_ADDED", "ADDED POINT WITH ID : " + pointAnnotation.featureIdentifier)
             if (viewAnnotationManager.getViewAnnotationByFeatureId(pointAnnotation.featureIdentifier) == null) { // Add annotation of view of the point (if there is no yet)
@@ -429,6 +496,7 @@ class MapFragment : Fragment(), KoinComponent {
                                 recyclerView.isGone = false
                                 val recyclerView = recyclerView
                                 recyclerView.layoutManager = GridLayoutManager(context, 1)
+                                Log.d("Barca6", "item, imageList: ${item.imagesList}")
                                 val adapter = DepartmentsListAdapter(item.imagesList,
                                     requireActivity() as MainActivity,
                                     binding,
@@ -552,13 +620,7 @@ class MapFragment : Fragment(), KoinComponent {
     @SuppressWarnings("MissingPermission")
     override fun onStart() {
         super.onStart()
-        Log.d("Barca", "onStart")
         mapView.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("Barca", "onResume")
     }
 
     @Override
